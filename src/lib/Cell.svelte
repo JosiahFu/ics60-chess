@@ -22,7 +22,7 @@
         display: block;
         height: 20px;
         width: 20px;
-        color: white;
+        color: #ffffff;
     }
 
     .black {
@@ -30,15 +30,15 @@
     }
 
     .selected {
-        background-color: greenyellow;
+        background-color: #acff2f7e;
     }
 
     .canMove {
-        background-color: yellow;
+        background-color: #ffff4e98;
     }
 
     .canCapture {
-        background-color: red;
+        background-color: #ff434381;
     }
 
     button {

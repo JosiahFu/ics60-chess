@@ -22,8 +22,8 @@
         <Cell
             {piece}
             selected={x === selectedX && y == selectedY}
-            canMove={canMove && piece === undefined}
-            canCapture={canMove && piece !== undefined}
+            canMove={canMove && (piece === undefined || piece[1] === selectedColor)}
+            canCapture={canMove && (piece !== undefined && piece[1] !== selectedColor)}
             on:click={() => {
                 if (selectedX === undefined || selectedY === undefined) {
                     selectedX = x

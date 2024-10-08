@@ -54,7 +54,7 @@ const pieces: Record<PieceName, PieceType> = {
             )
         },
         moveTo(board, color, x, y, targetX, targetY) {
-            const prevPiece = defaultMove(board, [pieces.PAWN, color], x, y, targetX, targetY)
+            const prevPiece = defaultMove(board, [targetY === 7 ? pieces.QUEEN : pieces.PAWN, color], x, y, targetX, targetY)
             if (prevPiece === undefined && board[targetY - 1][targetX]?.[0] == pieces.PAWN) {
                 board[targetY - 1][targetX] = undefined
                 return board[targetY - 1][targetX]
@@ -88,7 +88,15 @@ const pieces: Record<PieceName, PieceType> = {
     },
     KING: {
         canMoveTo(board, color, x, y, targetX, targetY) {
-            return abs(x - targetX) <= 1 && abs(y - targetY) <= 1 && board[targetY][targetX]?.[1] !== color
+            return (abs(x - targetX) <= 1 && abs(y - targetY) <= 1 && board[targetY][targetX]?.[1] !== color) || (y === 0 && targetY === 0 && abs(x - targetX) > 2 && board[targetY][targetX]?.[0] == pieces.ROOK && rangeEmpty(board, x, y, targetX, targetY))
+        },
+        moveTo(board, color, x, y, targetX, targetY) {
+            const targetPiece = board[targetY][targetX]
+            if (targetPiece?.[0] === pieces.ROOK && targetPiece[1] === color) {
+                defaultMove(board, targetPiece, targetX, targetY, x + (targetX > x ? 1 : -1), targetY)
+                return defaultMove(board, [pieces.KING, color], x, y, x + (targetX > x ? 2 : -2), targetY)
+            }
+            return defaultMove(board, [pieces.PAWN, color], x, y, targetX, targetY)
         },
         display: '\u265a',
     },
