@@ -19,10 +19,10 @@
 
 <style>
     .cell {
-        font-size: 0.4em;
+        font-size: 2em;
         display: block;
-        height: 20px;
-        width: 20px;
+        height: 100px;
+        width: 100px;
         color: #ffffff;
     }
 
