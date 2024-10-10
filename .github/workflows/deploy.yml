@@ -2,7 +2,7 @@ name: Deploy Vite to Github Pages
 
 on:
     push:
-        branches: ['main']
+        branches: ['constrained']
 
     workflow_dispatch:
 
