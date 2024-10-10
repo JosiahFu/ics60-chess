@@ -157,4 +157,8 @@ function startingBoard(): Board {
     ] satisfies Board).reverse()
 }
 
-export { type Board, type PieceName, type Piece, type PieceType, type Color, type Game, pieceTypes, pieceNames, pieceCounts, defaultMove, startingBoard, colorOf, typesOf, hasMoved }
+function startingGame(): Game {
+    return {board: startingBoard(), captured: []}
+}
+
+export { type Board, type PieceName, type Piece, type PieceType, type Color, type Game, pieceTypes, pieceNames, pieceCounts, defaultMove, startingBoard, startingGame, colorOf, typesOf, hasMoved }
