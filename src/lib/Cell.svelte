@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { pieceTypes, typesOf, type Piece } from '../data/pieces';
+    import { colorOf, pieceTypes, typesOf, type Piece } from '../data/pieces';
 
-    export let piece: Piece | undefined
+    export let piece: Piece | null
     export let selected = false
     export let canMove = false
     export let canCapture = false
@@ -12,9 +12,9 @@
     class:selected
     class:canMove
     class:canCapture
-    class:black={piece?.[1] === 'BLACK'}
+    class:black={colorOf(piece) === 'BLACK'}
     on:click>
-    {piece === undefined ? '' : typesOf(piece).map(type => pieceTypes[type].display).join(' ')}
+    {piece === null ? '' : typesOf(piece).map(type => pieceTypes[type].display).join(' ')}
 </button>
 
 <style>

@@ -6,7 +6,7 @@
     export let id: string
     export let client = false
 
-    $: realId = `schrodingers-chess-${id}`
+    const realId = `schrodingers-chess-${id}`
 
     const game = client ? peerClient(startingGame(), realId) : peerHost(startingGame(), realId)
     const connected = game.connected

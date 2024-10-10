@@ -1,8 +1,4 @@
 <script lang="ts">
-    import type { Writable } from 'svelte/store';
-    import { startingBoard, startingGame, type Game } from './data/pieces';
-    import Board from './lib/Board.svelte';
-    import { peerClient, peerHost, type ClientStore, type HostStore } from './lib/store/peer';
     import MultiplayerGame from './lib/MultiplayerGame.svelte';
 
     let id = ''

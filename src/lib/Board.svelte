@@ -29,8 +29,8 @@
     }
 
     $: reverseBoard = game.board.toReversed()
-    $: gamePieces = [...new Set(game.board.flat(1).filter(e => e !== undefined).concat(game.captured))]
-    $: selectedPiece = selectedX !== undefined && selectedY !== undefined ? game.board[selectedY][selectedX] : undefined
+    $: gamePieces = [...new Set(game.board.flat(1).filter(e => e !== null).concat(game.captured))]
+    $: selectedPiece = selectedX !== undefined && selectedY !== undefined ? game.board[selectedY][selectedX] : null
     $: [selectedType, selectedColor] = selectedPiece ?? [undefined, undefined]
     $: relativeBoard = selectedColor === 'BLACK' ? reverseBoard : game.board
     $: relativeSelectedY = selectedY === undefined ? undefined : selectedColor === 'BLACK' ? 7 - selectedY : selectedY
@@ -45,20 +45,20 @@
         <Cell
             {piece}
             selected={x === selectedX && y == selectedY}
-            canMove={canMove && (piece === undefined || piece[1] === selectedColor)}
-            canCapture={canMove && (piece !== undefined && piece[1] !== selectedColor)}
+            canMove={canMove && (piece === null || piece[1] === selectedColor)}
+            canCapture={canMove && (piece !== null && piece[1] !== selectedColor)}
             on:click={() => {
                 if (selectedX === undefined || selectedY === undefined) {
                     selectedX = x
                     selectedY = y
                 } else {
-                    if (selectedPiece !== undefined && canMove) {
+                    if (selectedPiece !== null && canMove) {
                         const type = moveableTypes[0]; // this semicolon is mandatory
 
                         const captured = (pieceTypes[type].moveTo ?? defaultMove)(relativeBoard, selectedPiece, selectedX, nonNull(relativeSelectedY), x, relativeY)
                         
-                        if (captured !== undefined) {
-                            captured[0] = typesOf(captured)?.filter(type => type !== 'KING')
+                        if (captured !== null) {
+                            captured[0] = typesOf(captured).filter(type => type !== 'KING')
                             game.captured.push(captured)
                         }
 
