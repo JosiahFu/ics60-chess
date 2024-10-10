@@ -1,10 +1,12 @@
 <script lang="ts">
-    import { colorOf, pieceTypes, typesOf, type Piece } from '../data/pieces';
+    import { colorOf, pieceNames, pieceTypes, typesOf, type Piece } from '../data/pieces';
 
     export let piece: Piece | null
     export let selected = false
     export let canMove = false
     export let canCapture = false
+
+    $: types = typesOf(piece) ?? []
 </script>
 
 <button
@@ -14,7 +16,17 @@
     class:canCapture
     class:black={colorOf(piece) === 'BLACK'}
     on:click>
-    {piece === null ? '' : typesOf(piece).map(type => pieceTypes[type].display).join(' ')}
+    {#if piece !== null}
+        <div class="typegrid">
+            {#each pieceNames as pieceName}
+                <div>
+                    {#if types.includes(pieceName)}
+                        {pieceTypes[pieceName].display}
+                    {/if}
+                </div>
+            {/each}
+        </div>
+    {/if}
 </button>
 
 <style>
@@ -24,6 +36,12 @@
         height: 100px;
         width: 100px;
         color: #ffffff;
+    }
+
+    .typegrid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 1fr);
     }
 
     .black {
