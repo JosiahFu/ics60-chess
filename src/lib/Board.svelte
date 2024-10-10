@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { defaultMove, pieceCounts, pieceTypes, typesOf, type Board, type Piece, type Color, colorOf } from '../data/pieces';
+    import { defaultMove, pieceCounts, pieceTypes, typesOf, type Board, type Piece, type Color, colorOf, pieceNames } from '../data/pieces';
     import { combinations } from '../util/combinations';
     import Cell from './Cell.svelte';
     import Table from './Table.svelte';
@@ -15,11 +15,11 @@
     }
 
     function resolve() {
-        for (const consideredTypes of combinations(Object.values(pieceTypes))) {
+        for (const consideredTypes of combinations(pieceNames)) {
         // for (const consideredTypes of [[pieceTypes.ROOK, pieceTypes.QUEEN]]) {
-            if (Object.values(pieceTypes).every(type => consideredTypes.includes(type))) continue
+            if (pieceNames.every(type => consideredTypes.includes(type))) continue
 
-            const totalOfTypes = consideredTypes.map(type => pieceCounts.get(type)!).reduce((a, b) => a + b)
+            const totalOfTypes = consideredTypes.map(type => pieceCounts[type]!).reduce((a, b) => a + b)
             for (const color of ['WHITE', 'BLACK'] satisfies Color[]) {
                 // If you have x pieces that can only be certain piece types, and the total count of those piece types is x, those types cannot be used anywhere else)
                 const consideredPieces = gamePieces.filter(piece => colorOf(piece) === color && typesOf(piece).every(type => consideredTypes.includes(type)))
@@ -40,7 +40,7 @@
     <Table data={reverseBoard} let:value={piece} let:column={x} let:row>
         {@const y = 7 - row}
         {@const relativeY = selectedColor === 'BLACK' ? 7 - y : y}
-        {@const moveableTypes = selectedX !== undefined && selectedY !== undefined && (x !== selectedX || y !== selectedY) && selectedType !== undefined ? selectedType.filter(type => type.canMoveTo(relativeBoard, nonNull(selectedPiece), nonNull(selectedX), nonNull(relativeSelectedY), x, relativeY)) : []}
+        {@const moveableTypes = selectedX !== undefined && selectedY !== undefined && (x !== selectedX || y !== selectedY) && selectedType !== undefined ? selectedType.filter(type => pieceTypes[type].canMoveTo(relativeBoard, nonNull(selectedPiece), nonNull(selectedX), nonNull(relativeSelectedY), x, relativeY)) : []}
         {@const canMove = moveableTypes.length > 0}
         <Cell
             {piece}
@@ -55,10 +55,10 @@
                     if (selectedPiece !== undefined && canMove) {
                         const type = moveableTypes[0]; // this semicolon is mandatory
 
-                        const captured = (type.moveTo ?? defaultMove)(relativeBoard, selectedPiece, selectedX, nonNull(relativeSelectedY), x, relativeY)
+                        const captured = (pieceTypes[type].moveTo ?? defaultMove)(relativeBoard, selectedPiece, selectedX, nonNull(relativeSelectedY), x, relativeY)
                         
                         if (captured !== undefined)
-                            captured[0] = typesOf(captured)?.filter(type => type !== pieceTypes.KING)
+                            captured[0] = typesOf(captured)?.filter(type => type !== 'KING')
 
                         selectedPiece[0] = moveableTypes // Can no longer use this
                         resolve()

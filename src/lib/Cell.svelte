@@ -14,7 +14,7 @@
     class:canCapture
     class:black={piece?.[1] === 'BLACK'}
     on:click>
-    {piece === undefined ? '' : typesOf(piece).map(type => type.display).join(' ')}
+    {piece === undefined ? '' : typesOf(piece).map(type => pieceTypes[type].display).join(' ')}
 </button>
 
 <style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { defaultMove, pieceTypes, startingBoard } from './data/pieces';
+    import { startingBoard } from './data/pieces';
     import Board from './lib/Board.svelte';
    
     
