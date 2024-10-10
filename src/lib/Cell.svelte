@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { pieces, type Piece } from '../data/pieces';
+    import { pieceTypes, typesOf, type Piece } from '../data/pieces';
 
     export let piece: Piece | undefined
     export let selected = false
@@ -14,11 +14,12 @@
     class:canCapture
     class:black={piece?.[1] === 'BLACK'}
     on:click>
-    {piece === undefined ? '' : piece[0].display}
+    {piece === undefined ? '' : typesOf(piece).map(type => type.display).join(' ')}
 </button>
 
 <style>
     .cell {
+        font-size: 0.4em;
         display: block;
         height: 20px;
         width: 20px;
