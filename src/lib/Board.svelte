@@ -1,12 +1,10 @@
 <script lang="ts">
-    import { defaultMove, pieceCounts, pieceTypes, typesOf, type Board, type Piece, type Color, colorOf, pieceNames } from '../data/pieces';
+    import { defaultMove, pieceCounts, pieceTypes, typesOf, type Game, type Piece, type Color, colorOf, pieceNames } from '../data/pieces';
     import { combinations } from '../util/combinations';
     import Cell from './Cell.svelte';
     import Table from './Table.svelte';
     
-    export let board: Board
-    export let gamePieces: Piece[] = [...new Set(board.flat(1).filter(e => e !== undefined))]
-    let reverseBoard = board.toReversed()
+    export let game: Game
     export let selectedX: number | undefined = undefined
     export let selectedY: number | undefined = undefined
 
@@ -29,10 +27,12 @@
             }
         }
     }
-    
-    $: selectedPiece = selectedX !== undefined && selectedY !== undefined ? board[selectedY][selectedX] : undefined
+
+    $: reverseBoard = game.board.toReversed()
+    $: gamePieces = [...new Set(game.board.flat(1).filter(e => e !== undefined).concat(game.captured))]
+    $: selectedPiece = selectedX !== undefined && selectedY !== undefined ? game.board[selectedY][selectedX] : undefined
     $: [selectedType, selectedColor] = selectedPiece ?? [undefined, undefined]
-    $: relativeBoard = selectedColor === 'BLACK' ? reverseBoard : board
+    $: relativeBoard = selectedColor === 'BLACK' ? reverseBoard : game.board
     $: relativeSelectedY = selectedY === undefined ? undefined : selectedColor === 'BLACK' ? 7 - selectedY : selectedY
 </script>
 
@@ -57,13 +57,14 @@
 
                         const captured = (pieceTypes[type].moveTo ?? defaultMove)(relativeBoard, selectedPiece, selectedX, nonNull(relativeSelectedY), x, relativeY)
                         
-                        if (captured !== undefined)
+                        if (captured !== undefined) {
                             captured[0] = typesOf(captured)?.filter(type => type !== 'KING')
+                            game.captured.push(captured)
+                        }
 
                         selectedPiece[0] = moveableTypes // Can no longer use this
                         resolve()
-                        board = board
-                        reverseBoard = reverseBoard
+                        game = game
                     }
                     selectedX = undefined
                     selectedY = undefined

@@ -2,6 +2,11 @@ import { array } from '../util/array'
 
 type Board = (Piece | undefined)[][]
 
+interface Game {
+    board: Board
+    captured: Piece[]
+}
+
 type PieceName = 'PAWN' | 'ROOK' | 'KNIGHT' | 'BISHOP' | 'KING' | 'QUEEN'
 
 const pieceNames: PieceName[] = ['PAWN', 'ROOK', 'KNIGHT', 'BISHOP', 'QUEEN', 'KING']
@@ -14,7 +19,7 @@ interface PieceType {
     display: string
 }
 
-type Piece = [PieceName[], Color]
+type Piece = [PieceName[], Color, moved: boolean]
 
 function typesOf(piece: Piece): PieceName[]
 function typesOf(piece: Piece | undefined): PieceName[] | undefined
@@ -28,9 +33,16 @@ function colorOf(piece: Piece | undefined) {
     return piece?.[1]
 }
 
+function hasMoved(piece: Piece): boolean
+function hasMoved(piece: Piece | undefined): boolean | undefined
+function hasMoved(piece: Piece | undefined) {
+    return piece?.[2]
+}
+
 function defaultMove(board: Board, piece: Piece, x: number, y: number, targetX: number, targetY: number): Piece | undefined {
     const prevPiece = board[targetY][targetX]
     board[targetY][targetX] = piece
+    piece[2] = true
     board[y][x] = undefined
     return prevPiece
 }
@@ -62,7 +74,7 @@ const pieceTypes: Record<PieceName, PieceType> = {
     PAWN: {
         canMoveTo(board, piece, x, y, targetX, targetY) {
             return (
-                (x === targetX && (y + 1 === targetY || (y === 1 && targetY === 3 && board[y + 1][targetX] === undefined)) && board[targetY][targetX] === undefined) ||
+                (x === targetX && (y + 1 === targetY || (!hasMoved(piece) && y + 2 === targetY && board[y + 1][targetX] === undefined)) && board[targetY][targetX] === undefined) ||
                 ((x + 1 === targetX || x - 1 === targetX) && (y + 1 === targetY) && board[targetY][targetX] !== undefined && board[targetY][targetX]?.[1] !== colorOf(piece)) ||
                 ((x + 1 === targetX || x - 1 === targetX) && (y === 4 && targetY === 5) && colorOf(board[4][targetX]) !== colorOf(piece) && (typesOf(board[4][targetX])?.includes('PAWN') ?? false)) // en passant!
             )
@@ -70,7 +82,8 @@ const pieceTypes: Record<PieceName, PieceType> = {
         moveTo(board, piece, x, y, targetX, targetY) {
             const prevPiece = defaultMove(board, piece, x, y, targetX, targetY)
             if (abs(x - targetX) === 1 && targetY - y === 1 && prevPiece === undefined && (typesOf(board[targetY - 1][targetX])?.includes('PAWN') ?? false)) {
-                const passanted = board[targetY - 1][targetX]
+                const passanted = board[targetY - 1][targetX]!
+                passanted[0] = ['PAWN']
                 board[targetY - 1][targetX] = undefined
                 return passanted
             }
@@ -103,12 +116,13 @@ const pieceTypes: Record<PieceName, PieceType> = {
     },
     KING: {
         canMoveTo(board, piece, x, y, targetX, targetY) {
-            return (abs(x - targetX) <= 1 && abs(y - targetY) <= 1 && board[targetY][targetX]?.[1] !== colorOf(piece)) || (y === 0 && targetY === 0 && abs(x - targetX) > 2 && (typesOf(board[targetY][targetX])?.includes('ROOK') ?? false) && rangeEmpty(board, x, y, targetX, targetY))
+            return (abs(x - targetX) <= 1 && abs(y - targetY) <= 1 && board[targetY][targetX]?.[1] !== colorOf(piece)) || (y === targetY && !hasMoved(piece) && abs(x - targetX) > 2 && !hasMoved(board[targetY][targetX]) && (typesOf(board[targetY][targetX])?.includes('ROOK') ?? false) && rangeEmpty(board, x, y, targetX, targetY))
         },
         moveTo(board, piece, x, y, targetX, targetY) {
             const targetPiece = board[targetY][targetX]
             if (typesOf(targetPiece)?.includes('ROOK') && colorOf(targetPiece) === colorOf(piece)) {
                 defaultMove(board, targetPiece as Piece /*If it has type, it must not be undefined */, targetX, targetY, x + (targetX > x ? 1 : -1), targetY)
+                targetPiece![0] = ['ROOK']
                 return defaultMove(board, piece, x, y, x + (targetX > x ? 2 : -2), targetY)
             }
             return defaultMove(board, piece, x, y, targetX, targetY)
@@ -129,18 +143,18 @@ function startingBoard(): Board {
     function emptyRow() {
         return array(8, undefined)
     }
-    function anyPiece(): PieceName[] { return [...pieceNames] }
+    function pieceAny(color: Color) { return (): Piece => [[...pieceNames], color, false] }
 
     return ([
-        array(8, () => [anyPiece(), 'BLACK']),
-        array(8, () => [anyPiece(), 'BLACK']),
+        array(8, pieceAny('BLACK')),
+        array(8, pieceAny('BLACK')),
         emptyRow(),
         emptyRow(),
         emptyRow(),
         emptyRow(),
-        array(8, () => [anyPiece(), 'WHITE']),
-        array(8, () => [anyPiece(), 'WHITE']),
+        array(8, pieceAny('WHITE')),
+        array(8, pieceAny('WHITE')),
     ] satisfies Board).reverse()
 }
 
-export { type Board, type PieceName, type Piece, type PieceType, type Color, pieceTypes, pieceNames, pieceCounts, defaultMove, startingBoard, colorOf, typesOf }
+export { type Board, type PieceName, type Piece, type PieceType, type Color, type Game, pieceTypes, pieceNames, pieceCounts, defaultMove, startingBoard, colorOf, typesOf, hasMoved }

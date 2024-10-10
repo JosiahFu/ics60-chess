@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { startingBoard } from './data/pieces';
+    import { startingBoard, type Game } from './data/pieces';
     import Board from './lib/Board.svelte';
    
     
-    let board = startingBoard()
+    let game: Game = { board: startingBoard(), captured: [] }
 </script>
 
 <main>
-    <Board {board} />
+    <Board bind:game />
 </main>
