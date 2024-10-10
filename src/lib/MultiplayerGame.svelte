@@ -15,5 +15,5 @@
 {#if $connected === false}
     <div>Connecting...</div>
 {:else}
-    <Board bind:game={$game} />
+    <Board bind:game={$game} player={client ? 'BLACK' : 'WHITE'} />
 {/if}

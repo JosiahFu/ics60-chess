@@ -5,6 +5,7 @@
     import Table from './Table.svelte';
     
     export let game: Game
+    export let player: Color | undefined = undefined
     export let selectedX: number | undefined = undefined
     export let selectedY: number | undefined = undefined
 
@@ -31,26 +32,30 @@
     $: reverseBoard = game.board.toReversed()
     $: gamePieces = [...new Set(game.board.flat(1).filter(e => e !== null).concat(game.captured))]
     $: selectedPiece = selectedX !== undefined && selectedY !== undefined ? game.board[selectedY][selectedX] : null
-    $: [selectedType, selectedColor] = selectedPiece ?? [undefined, undefined]
-    $: relativeBoard = selectedColor === 'BLACK' ? reverseBoard : game.board
-    $: relativeSelectedY = selectedY === undefined ? undefined : selectedColor === 'BLACK' ? 7 - selectedY : selectedY
+    $: relativeBoard = colorOf(selectedPiece) === 'BLACK' ? reverseBoard : game.board
+    $: relativeSelectedY = selectedY === undefined ? undefined : colorOf(selectedPiece) === 'BLACK' ? 7 - selectedY : selectedY
+    $: isTurn = player === undefined || game.turn === player
 </script>
 
 <main>
     <Table data={reverseBoard} let:value={piece} let:column={x} let:row>
         {@const y = 7 - row}
-        {@const relativeY = selectedColor === 'BLACK' ? 7 - y : y}
-        {@const moveableTypes = selectedX !== undefined && selectedY !== undefined && (x !== selectedX || y !== selectedY) && selectedType !== undefined ? selectedType.filter(type => pieceTypes[type].canMoveTo(relativeBoard, nonNull(selectedPiece), nonNull(selectedX), nonNull(relativeSelectedY), x, relativeY)) : []}
+        {@const relativeY = colorOf(selectedPiece) === 'BLACK' ? 7 - y : y}
+        {@const moveableTypes = selectedX !== undefined && selectedY !== undefined && (x !== selectedX || y !== selectedY) && selectedPiece !== null ? typesOf(selectedPiece).filter(type => pieceTypes[type].canMoveTo(relativeBoard, selectedPiece, nonNull(selectedX), nonNull(relativeSelectedY), x, relativeY)) : []}
         {@const canMove = moveableTypes.length > 0}
         <Cell
             {piece}
             selected={x === selectedX && y == selectedY}
-            canMove={canMove && (piece === null || piece[1] === selectedColor)}
-            canCapture={canMove && (piece !== null && piece[1] !== selectedColor)}
+            canMove={canMove && (piece === null || colorOf(piece) === colorOf(selectedPiece))}
+            canCapture={canMove && (piece !== null && colorOf(piece) !== colorOf(selectedPiece))}
             on:click={() => {
+                if (!isTurn) return
+
                 if (selectedX === undefined || selectedY === undefined) {
-                    selectedX = x
-                    selectedY = y
+                    if (colorOf(piece) === game.turn) {
+                        selectedX = x
+                        selectedY = y
+                    }
                 } else {
                     if (selectedPiece !== null && canMove) {
                         const type = moveableTypes[0]; // this semicolon is mandatory
@@ -65,6 +70,7 @@
                         selectedPiece[0] = moveableTypes // Can no longer use this
                         resolve()
                         game = game
+                        game.turn = game.turn === 'WHITE' ? 'BLACK' : 'WHITE'
                     }
                     selectedX = undefined
                     selectedY = undefined

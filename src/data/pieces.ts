@@ -5,6 +5,7 @@ type Board = (Piece | null /*JSON cannot encode undefined*/)[][]
 interface Game {
     board: Board
     captured: Piece[]
+    turn: Color
 }
 
 type PieceName = 'PAWN' | 'ROOK' | 'KNIGHT' | 'BISHOP' | 'KING' | 'QUEEN'
@@ -158,7 +159,7 @@ function startingBoard(): Board {
 }
 
 function startingGame(): Game {
-    return {board: startingBoard(), captured: []}
+    return {board: startingBoard(), captured: [], turn: 'WHITE'}
 }
 
 export { type Board, type PieceName, type Piece, type PieceType, type Color, type Game, pieceTypes, pieceNames, pieceCounts, defaultMove, startingBoard, startingGame, colorOf, typesOf, hasMoved }
