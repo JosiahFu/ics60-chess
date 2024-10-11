@@ -10,16 +10,12 @@ import MultiplayerGame from './lib/MultiplayerGame.svelte';
 
 <main>
     {#if mode === undefined}
-        <p>
-            <button on:click={() => mode = 'same-device'}>Single Device</button>
-        </p>
-        <p>
-            <input bind:value={id} placeholder="id" />
-        </p>
-        <p>
+        <button on:click={() => mode = 'same-device'}>Single Device</button>
+        <input bind:value={id} placeholder="id" />
+        <div class="buttons">
             <button disabled={!id} on:click={() => mode = 'host'}>Host</button>
             <button disabled={!id} on:click={() => mode = 'client'}>Join</button>
-        </p>
+        </div>
     {:else if mode === 'same-device'}
         <Board />
     {:else}
@@ -30,3 +26,24 @@ import MultiplayerGame from './lib/MultiplayerGame.svelte';
         {/if}
     {/if}
 </main>
+
+<style>
+    main {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-content: center;
+        justify-items: center;
+        gap: 1em;
+    }
+
+    .buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1em;
+    }
+
+    button, input {
+        font-size: inherit;
+    }
+</style>

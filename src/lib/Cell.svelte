@@ -31,10 +31,10 @@
 
 <style>
     .cell {
-        font-size: 2em;
+        font-size: 1em;
         display: block;
-        height: 100px;
-        width: 100px;
+        height: 2.5em;
+        width: 2.5em;
         color: #ffffff;
     }
 
