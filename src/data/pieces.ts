@@ -85,6 +85,7 @@ const pieceTypes: Record<PieceName, PieceType> = {
             if (abs(x - targetX) === 1 && targetY - y === 1 && prevPiece === null && (typesOf(board[targetY - 1][targetX])?.includes('PAWN') ?? false)) {
                 const passanted = board[targetY - 1][targetX]!
                 passanted[0] = ['PAWN']
+                piece[0] = ['PAWN']
                 board[targetY - 1][targetX] = null
                 return passanted
             }

@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { defaultMove, pieceCounts, pieceTypes, typesOf, type Game, type Piece, type Color, colorOf, pieceNames } from '../data/pieces';
+    import { defaultMove, pieceCounts, pieceTypes, typesOf, type Game, type Piece, type Color, colorOf, pieceNames, startingBoard, startingGame } from '../data/pieces';
     import { combinations } from '../util/combinations';
     import Cell from './Cell.svelte';
     import Table from './Table.svelte';
     
-    export let game: Game
+    export let game: Game = startingGame()
     export let player: Color | undefined = undefined
     export let selectedX: number | undefined = undefined
     export let selectedY: number | undefined = undefined
@@ -15,7 +15,6 @@
 
     function resolve() {
         for (const consideredTypes of combinations(pieceNames)) {
-        // for (const consideredTypes of [[pieceTypes.ROOK, pieceTypes.QUEEN]]) {
             if (pieceNames.every(type => consideredTypes.includes(type))) continue
 
             const totalOfTypes = consideredTypes.map(type => pieceCounts[type]!).reduce((a, b) => a + b)
@@ -60,14 +59,17 @@
                     if (selectedPiece !== null && canMove) {
                         const type = moveableTypes[0]; // this semicolon is mandatory
 
+                        const prevTypes = typesOf(selectedPiece)
+
                         const captured = (pieceTypes[type].moveTo ?? defaultMove)(relativeBoard, selectedPiece, selectedX, nonNull(relativeSelectedY), x, relativeY)
                         
                         if (captured !== null) {
                             captured[0] = typesOf(captured).filter(type => type !== 'KING')
                             game.captured.push(captured)
                         }
-
-                        selectedPiece[0] = moveableTypes // Can no longer use this
+                        
+                        if (typesOf(selectedPiece) === prevTypes) // Sometimes the moveTo will modify the types
+                            selectedPiece[0] = moveableTypes // Can no longer use moveableTypes
                         resolve()
                         game = game
                         game.turn = game.turn === 'WHITE' ? 'BLACK' : 'WHITE'
