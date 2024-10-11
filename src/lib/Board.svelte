@@ -37,8 +37,8 @@
 </script>
 
 <main>
-    <Table data={reverseBoard} let:value={piece} let:column={x} let:row>
-        {@const y = 7 - row}
+    <Table data={player === 'BLACK' ? game.board : reverseBoard} let:value={piece} let:column={x} let:row>
+        {@const y = player === 'BLACK' ? row : 7 - row}
         {@const relativeY = colorOf(selectedPiece) === 'BLACK' ? 7 - y : y}
         {@const moveableTypes = selectedX !== undefined && selectedY !== undefined && (x !== selectedX || y !== selectedY) && selectedPiece !== null ? typesOf(selectedPiece).filter(type => pieceTypes[type].canMoveTo(relativeBoard, selectedPiece, nonNull(selectedX), nonNull(relativeSelectedY), x, relativeY)) : []}
         {@const canMove = moveableTypes.length > 0}
