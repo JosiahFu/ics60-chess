@@ -22,7 +22,7 @@ import MultiplayerGame from './lib/MultiplayerGame.svelte';
         <MultiplayerGame {id} client={mode === 'client'} />
         {#if mode === 'host'}
             {@const link = `${window.location.origin}${window.location.pathname}?join=${id}`}
-            <p>Join link: <a href={link}>{link}</a></p>
+            <div>Join link: <a href={link}>{link}</a></div>
         {/if}
     {/if}
 </main>

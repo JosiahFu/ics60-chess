@@ -25,22 +25,3 @@
     background-color: #f9f9f9;
   }
 }
-
-@media screen and (min-width: 480px) {
-  body {
-    font-size: 1.4em;
-  }
-}
-
-
-@media screen and (min-width: 720px) {
-  body {
-    font-size: 2em;
-  }
-}
-
-@media screen and (min-width: 1024px) {
-  body {
-    font-size: 2.5em;
-  }
-}

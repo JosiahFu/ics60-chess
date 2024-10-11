@@ -36,7 +36,7 @@
     $: isTurn = player === undefined || game.turn === player
 </script>
 
-<main>
+<div class="board">
     <Table data={player === 'BLACK' ? game.board : reverseBoard} let:value={piece} let:column={x} let:row>
         {@const y = player === 'BLACK' ? row : 7 - row}
         {@const relativeY = colorOf(selectedPiece) === 'BLACK' ? 7 - y : y}
@@ -80,4 +80,30 @@
             }}
         />
     </Table>
-</main>
+</div>
+
+<style>
+    .board {
+        display: contents;
+    }
+
+    @media screen and (min-width: 480px) {
+        .board {
+            font-size: 1.4em;
+        }
+    }
+
+
+    @media screen and (min-width: 720px) {
+        .board {
+            font-size: 2em;
+        }
+    }
+
+    @media screen and (min-width: 1024px) {
+        .board {
+            font-size: 2.5em;
+        }
+    }
+
+</style>
