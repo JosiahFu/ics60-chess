@@ -33,8 +33,8 @@
     .cell {
         font-size: 1em;
         display: block;
-        height: 2.5em;
-        width: 2.5em;
+        height: 2.7em;
+        width: 2.7em;
         color: #ffffff;
     }
 
