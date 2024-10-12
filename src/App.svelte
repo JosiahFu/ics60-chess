@@ -23,7 +23,7 @@
 
 <main>
     {#if mode === undefined}
-        <h1>Constrained Chess</h1>
+        <h1>Constraint Chess</h1>
         <div class="big-piece">
             <Cell piece={[pieceNames, 'WHITE', false]} />
         </div>
@@ -36,7 +36,7 @@
                 <h2>Multiplayer</h2>
                 <Button on:click={host}>Start</Button>
                 <div class="columns">
-                    <input bind:value={id} placeholder="id" />
+                    <input bind:value={id} placeholder="Game ID" />
                     <Button disabled={!id} on:click={() => mode = 'client'}>Join</Button>
                 </div>
                 <p class="sub">(Does not work with some college wifis unless both devices are on the same wifi)</p>
@@ -48,8 +48,8 @@
         <MultiplayerGame {id} client={mode === 'client'} />
         {#if mode === 'host'}
             {@const link = `${window.location.origin}${window.location.pathname}?join=${id}`}
-            <div>Game id: {id}</div>
-            <div>Join link: <a href={link}>{link}</a></div>
+            <div>Game ID: {id}</div>
+            <div><a href={link}>Join Link</a></div>
         {/if}
     {/if}
 </main>
