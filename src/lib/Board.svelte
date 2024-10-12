@@ -37,6 +37,13 @@
 </script>
 
 <div class="board">
+    <div class="captured">
+        {#each game.captured as piece}
+            {#if colorOf(piece) === 'WHITE'}
+                <Cell {piece} />
+            {/if}
+        {/each}
+    </div>
     <Table data={player === 'BLACK' ? game.board : reverseBoard} let:value={piece} let:column={x} let:row>
         {@const y = player === 'BLACK' ? row : 7 - row}
         {@const relativeY = colorOf(selectedPiece) === 'BLACK' ? 7 - y : y}
@@ -81,27 +88,63 @@
             }}
         />
     </Table>
+    <div class="captured">
+        {#each game.captured as piece}
+            {#if colorOf(piece) === 'BLACK'}
+                <Cell {piece} />
+            {/if}
+        {/each}
+    </div>
 </div>
 
 <style>
     .board {
-        display: contents;
+        display: grid;
+        grid-template-rows: 1fr auto 1fr;
+        gap: 0.5em;
+    }
+
+    
+    .captured {
+        background-color: #444;
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-auto-flow: row;
+    }
+
+    @media screen and (min-aspect-ratio: 1) {
+        .board {
+            grid-template-rows: auto;
+            grid-template-columns: 1fr auto 1fr
+        }
+
+        .captured {
+            grid-template-rows: repeat(8, 1fr);
+            grid-template-columns: auto;
+            grid-auto-flow: column;
+        }
     }
 
     @media screen and (min-width: 480px) {
         .board {
-            font-size: 1.4em;
+            font-size: 1.3em;
         }
     }
 
 
     @media screen and (min-width: 720px) {
         .board {
+            font-size: 1.8em;
+        }
+    }
+
+    @media screen and (min-width: 1080px) {
+        .board {
             font-size: 2em;
         }
     }
 
-    @media screen and (min-width: 1024px) {
+    @media screen and (min-width: 1440px) {
         .board {
             font-size: 2.5em;
         }
