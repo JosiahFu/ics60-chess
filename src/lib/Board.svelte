@@ -64,6 +64,7 @@
                         const captured = (pieceTypes[type].moveTo ?? defaultMove)(relativeBoard, selectedPiece, selectedX, nonNull(relativeSelectedY), x, relativeY)
                         
                         if (captured !== null) {
+                            if (typesOf(captured).length !== 1 || typesOf(captured)[0] !== 'KING')
                             captured[0] = typesOf(captured).filter(type => type !== 'KING')
                             game.captured.push(captured)
                         }

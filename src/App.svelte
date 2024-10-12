@@ -1,29 +1,45 @@
 <script lang="ts">
+    import { pieceNames } from './data/pieces';
     import Board from './lib/Board.svelte';
-import MultiplayerGame from './lib/MultiplayerGame.svelte';
+    import Button from './lib/Button.svelte';
+    import Cell from './lib/Cell.svelte';
+    import MultiplayerGame from './lib/MultiplayerGame.svelte';
+    import { array } from './util/array';
+
+    const letters = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ']
 
     const queryId = new URLSearchParams(window.location.search).get('join')
 
     let id = queryId ?? ''
     let mode: undefined | 'same-device' | 'host' | 'client' = queryId === null ? undefined : 'client'
+
+    $: id = [...id.toUpperCase()].filter(c => letters.includes(c)).slice(0, 4).join('')
+
+    function host() {
+        id = array(4, () => letters[Math.floor(letters.length*Math.random())]).join('')
+        mode = 'host'
+    }
 </script>
 
 <main>
     {#if mode === undefined}
         <h1>Constrained Chess</h1>
+        <div class="big-piece">
+            <Cell piece={[pieceNames, 'WHITE', false]} />
+        </div>
         <div class="columns">
             <div class="column">
                 <h2>Single Device</h2>
-                <button on:click={() => mode = 'same-device'}>Start</button>
+                <Button on:click={() => mode = 'same-device'}>Start</Button>
             </div>
             <div class="column">
                 <h2>Multiplayer</h2>
-                <p>(not working)</p>
-                <input bind:value={id} placeholder="id" />
+                <Button on:click={host}>Start</Button>
                 <div class="columns">
-                    <button disabled={!id} on:click={() => mode = 'host'}>Host</button>
-                    <button disabled={!id} on:click={() => mode = 'client'}>Join</button>
+                    <input bind:value={id} placeholder="id" />
+                    <Button disabled={!id} on:click={() => mode = 'client'}>Join</Button>
                 </div>
+                <p class="sub">(Does not work with some college wifis unless both devices are on the same wifi)</p>
             </div>
         </div>
     {:else if mode === 'same-device'}
@@ -32,6 +48,7 @@ import MultiplayerGame from './lib/MultiplayerGame.svelte';
         <MultiplayerGame {id} client={mode === 'client'} />
         {#if mode === 'host'}
             {@const link = `${window.location.origin}${window.location.pathname}?join=${id}`}
+            <div>Game id: {id}</div>
             <div>Join link: <a href={link}>{link}</a></div>
         {/if}
     {/if}
@@ -51,6 +68,7 @@ import MultiplayerGame from './lib/MultiplayerGame.svelte';
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1em;
+        justify-items: center;
     }
 
     .column {
@@ -58,13 +76,38 @@ import MultiplayerGame from './lib/MultiplayerGame.svelte';
         flex-direction: column;
         align-items: center;
         gap: 1em;
+        width: min-content;
     }
 
-    button, input {
+    .column h2 {
+        width: max-content;
+    }
+
+    input {
         font-size: inherit;
+        background-color: #1d1d1d;
+        padding: 0.5em 1em;
+        border-radius: 0.5em;
+        border: none;
+        width: 4em;
+    }
+
+    input:focus {
+        background-color: #212121;
+        outline: none;
     }
 
     h1, h2, p {
         margin: 0;
+    }
+
+    .sub {
+        font-size: 0.7em;
+        opacity: 0.7;
+    }
+
+    .big-piece {
+        font-size: 4em;
+        display: contents;
     }
 </style>
