@@ -49,7 +49,7 @@
         {#if mode === 'host'}
             {@const link = `${window.location.origin}${window.location.pathname}?join=${id}`}
             <div>Game ID: {id}</div>
-            <div><a href={link}>Join Link</a></div>
+            <div>Share <a href={link} on:click={event => event.preventDefault()}>this join link</a></div>
         {/if}
     {/if}
 </main>
