@@ -23,7 +23,7 @@
 
 <main>
     {#if mode === undefined}
-        <h1>Constraint Chess</h1>
+        <h1>Schr&ouml;dinger's Chess</h1>
         <div class="big-piece">
             <Cell piece={[pieceNames, 'WHITE', false]} disabled />
         </div>
@@ -37,7 +37,7 @@
                 <Button on:click={host}>Start</Button>
                 <div class="columns">
                     <input bind:value={id} placeholder="Game ID" />
-                    <Button disabled={!id} on:click={() => mode = 'client'}>Join</Button>
+                    <Button disabled={id.length < 4} on:click={() => mode = 'client'}>Join</Button>
                 </div>
                 <p class="sub">(Does not work with some college wifis unless both devices are on the same wifi)</p>
             </div>
