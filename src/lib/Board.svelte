@@ -39,7 +39,7 @@
 <div class="board">
     <div class="captured">
         {#each game.captured as piece}
-            {#if colorOf(piece) === 'WHITE'}
+            {#if colorOf(piece) === (player ?? 'WHITE')}
                 <Cell {piece} disabled />
             {/if}
         {/each}
@@ -91,7 +91,7 @@
     </Table>
     <div class="captured">
         {#each game.captured as piece}
-            {#if colorOf(piece) === 'BLACK'}
+            {#if colorOf(piece) !== (player ?? 'WHITE')}
                 <Cell {piece} disabled />
             {/if}
         {/each}
