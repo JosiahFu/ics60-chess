@@ -25,7 +25,7 @@
     {#if mode === undefined}
         <h1>Constraint Chess</h1>
         <div class="big-piece">
-            <Cell piece={[pieceNames, 'WHITE', false]} />
+            <Cell piece={[pieceNames, 'WHITE', false]} disabled />
         </div>
         <div class="columns">
             <div class="column">

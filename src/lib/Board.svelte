@@ -40,7 +40,7 @@
     <div class="captured">
         {#each game.captured as piece}
             {#if colorOf(piece) === 'WHITE'}
-                <Cell {piece} />
+                <Cell {piece} disabled />
             {/if}
         {/each}
     </div>
@@ -54,6 +54,7 @@
             selected={x === selectedX && y == selectedY}
             canMove={canMove && (piece === null || colorOf(piece) === colorOf(selectedPiece))}
             canCapture={canMove && (piece !== null && colorOf(piece) !== colorOf(selectedPiece))}
+            active={isTurn && ((selectedX === undefined || selectedY === undefined) ? colorOf(piece) === game.turn : selectedPiece !== null && canMove)}
             on:click={() => {
                 if (!isTurn) return
 
@@ -91,7 +92,7 @@
     <div class="captured">
         {#each game.captured as piece}
             {#if colorOf(piece) === 'BLACK'}
-                <Cell {piece} />
+                <Cell {piece} disabled />
             {/if}
         {/each}
     </div>

@@ -3,6 +3,8 @@
 
     export let piece: Piece | null
     export let selected = false
+    export let active = false
+    export let disabled = false
     export let canMove = false
     export let canCapture = false
 
@@ -15,6 +17,8 @@
     class:canMove
     class:canCapture
     class:black={colorOf(piece) === 'BLACK'}
+    class:active
+    {disabled}
     on:click>
     {#if piece !== null}
         <div class="typegrid">
@@ -36,6 +40,10 @@
         height: 2.7em;
         width: 2.7em;
         color: #ffffff;
+    }
+
+    .cell.active {
+        cursor: pointer;
     }
 
     .typegrid {
