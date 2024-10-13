@@ -91,7 +91,7 @@ const pieceTypes: Record<PieceName, PieceType> = {
             }
             return prevPiece
         },
-        display: '\u265f',
+        display: '\u265f\ufe0e',
     },
     ROOK: {
         canMoveTo(board, piece, x, y, targetX, targetY) {
