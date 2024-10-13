@@ -36,7 +36,9 @@
                 <h2>Multiplayer</h2>
                 <Button on:click={host}>Start</Button>
                 <div class="columns">
-                    <input bind:value={id} placeholder="Game ID" />
+                    <input bind:value={id} placeholder="Game ID" on:keyup={event => {
+                        if (event.key === 'Enter' && id.length >= 4) mode = 'client'
+                    }} />
                     <Button disabled={id.length < 4} on:click={() => mode = 'client'}>Join</Button>
                 </div>
                 <p class="sub">(Does not work with some college wifis unless both devices are on the same wifi)</p>
@@ -49,7 +51,7 @@
         {#if mode === 'host'}
             {@const link = `${window.location.origin}${window.location.pathname}?join=${id}`}
             <div>Game ID: {id}</div>
-            <div>Share <a href={link} on:click={event => event.preventDefault()}>this join link</a></div>
+            <div>Share this <a href={link}>join link</a></div>
         {/if}
     {/if}
 </main>
