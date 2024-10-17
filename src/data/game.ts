@@ -5,6 +5,7 @@ import {colorOf, type Piece, type PieceName, pieceNames, typesOf} from "./pieces
 type Board = (Piece | null /*JSON cannot encode undefined*/)[][]
 
 type Color = 'BLACK' | 'WHITE'
+const colors: Color[] = ['BLACK', 'WHITE']
 
 interface Game {
     board: Board

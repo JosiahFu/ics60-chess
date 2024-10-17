@@ -9,11 +9,17 @@
     import Table from './Table.svelte';
     import { nonNull } from "../util/nonNull";
     import {type Color, type Game, piecesOf, resolve, startingGame} from "../data/game";
+    import {tablize} from "../util/tablize";
+    import {associate} from "../util/associate";
 
     export let game: Game = startingGame()
     export let player: Color | undefined = undefined
     export let selectedX: number | undefined = undefined
     export let selectedY: number | undefined = undefined
+
+    let screenWidth: number
+    let screenHeight: number
+    $: horizontalLayout = screenWidth >= screenHeight
 
     $: reverseBoard = game.board.toReversed()
     $: gamePieces = piecesOf(game)
@@ -21,16 +27,18 @@
     $: relativeBoard = colorOf(selectedPiece) === 'BLACK' ? reverseBoard : game.board
     $: relativeSelectedY = selectedY === undefined ? undefined : colorOf(selectedPiece) === 'BLACK' ? 7 - selectedY : selectedY
     $: isTurn = player === undefined || game.turn === player
+
+    $: captured1 = game.captured.filter(piece => colorOf(piece) === (player ?? 'WHITE'))
+    $: captured2 = game.captured.filter(piece => colorOf(piece) !== (player ?? 'WHITE'))
+    $: captureRows = Math.ceil(Math.max(captured1.length, captured2.length) / 8)
 </script>
 
-<div class="board">
-    <div class="captured">
-        {#each game.captured as piece}
-            {#if colorOf(piece) === (player ?? 'WHITE')}
-                <Cell {piece} disabled />
-            {/if}
-        {/each}
-    </div>
+<svelte:window bind:innerWidth={screenWidth} bind:innerHeight={screenHeight} />
+
+<div class="board" class:horizontalLayout>
+    <Table gray invertGrid={captureRows % 2 === 0} data={tablize(captured1, horizontalLayout ? 8 : captureRows, horizontalLayout ? captureRows : 8)} let:value={piece}>
+        <Cell piece={piece ?? null} disabled />
+    </Table>
     <Table data={player === 'BLACK' ? game.board : reverseBoard} let:value={piece} let:column={x} let:row>
         {@const y = player === 'BLACK' ? row : 7 - row}
         {@const relativeY = colorOf(selectedPiece) === 'BLACK' ? 7 - y : y}
@@ -78,13 +86,9 @@
             }}
         />
     </Table>
-    <div class="captured">
-        {#each game.captured as piece}
-            {#if colorOf(piece) !== (player ?? 'WHITE')}
-                <Cell {piece} disabled />
-            {/if}
-        {/each}
-    </div>
+    <Table gray invertGrid data={tablize(captured2, horizontalLayout ? 8 : captureRows, horizontalLayout ? captureRows : 8)} let:value={piece}>
+        <Cell piece={piece ?? null} disabled />
+    </Table>
 </div>
 
 <style>
@@ -94,25 +98,9 @@
         gap: 0.5em;
     }
 
-    
-    .captured {
-        background-color: #444;
-        display: grid;
-        grid-template-columns: repeat(8, 1fr);
-        grid-auto-flow: row;
-    }
-
-    @media screen and (min-aspect-ratio: 1) {
-        .board {
-            grid-template-rows: auto;
-            grid-template-columns: 1fr auto 1fr
-        }
-
-        .captured {
-            grid-template-rows: repeat(8, 1fr);
-            grid-template-columns: auto;
-            grid-auto-flow: column;
-        }
+    .board.horizontalLayout {
+        grid-template-rows: auto;
+        grid-template-columns: 1fr auto 1fr
     }
 
     @media screen and (min-width: 480px) {
