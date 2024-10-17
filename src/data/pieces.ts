@@ -1,18 +1,9 @@
-import { array } from '../util/array'
-
-type Board = (Piece | null /*JSON cannot encode undefined*/)[][]
-
-interface Game {
-    board: Board
-    captured: Piece[]
-    turn: Color
-}
+import type { Color, Board } from "./game";
+import {coordsBetween} from "../util/coordsBetween";
 
 type PieceName = 'PAWN' | 'ROOK' | 'KNIGHT' | 'BISHOP' | 'KING' | 'QUEEN'
 
 const pieceNames: PieceName[] = ['PAWN', 'ROOK', 'KNIGHT', 'BISHOP', 'QUEEN', 'KING']
-
-type Color = 'BLACK' | 'WHITE'
 
 interface PieceType {
     canMoveTo(board: Board, piece: Piece, x: number, y: number, targetX: number, targetY: number): boolean
@@ -49,23 +40,6 @@ function defaultMove(board: Board, piece: Piece, x: number, y: number, targetX: 
 }
 
 const abs = Math.abs
-
-/**
- * The interpolated axis has exclusive bounds
- */
-function coordsBetween(x1: number, y1: number, x2: number, y2: number): [number, number][] {
-    if (x1 === x2) {
-        return array(abs(y1 - y2) - 1, i => i + Math.min(y1, y2) + 1).map(y => [x1, y])
-    } else if (y1 === y2) {
-        return array(abs(x1 - x2) - 1, i => i + Math.min(x1, x2) + 1).map(x => [x, y1])
-    } else if (x1 - x2 === y1 - y2) {
-        return array(abs(x1 - x2) - 1, i => [i + Math.min(x1, x2) + 1, i + Math.min(y1, y2) + 1])
-    } else if (x1 - x2 === -(y1 - y2)) {
-        return array(abs(x1 - x2) - 1, i => [i + Math.min(x1, x2) + 1, -i + Math.max(y1, y2) - 1])
-    } else {
-        throw new Error(`Cannot create list of coords between (${x1}, ${y1}) and (${x2}, ${y2})`)
-    }
-}
 
 function rangeEmpty(board: Board, x1: number, y1: number, x2: number, y2: number) {
     return coordsBetween(x1, y1, x2, y2).every(([x, y]) => board[y][x] === null)
@@ -139,28 +113,5 @@ const pieceTypes: Record<PieceName, PieceType> = {
     },
 }
 
-const pieceCounts: Record<PieceName, number> = {PAWN: 8, ROOK: 2, BISHOP: 2, KNIGHT: 2, QUEEN: 1, KING: 1} 
+export { type PieceName, type Piece, type PieceType, pieceTypes, pieceNames, defaultMove, colorOf, typesOf, hasMoved }
 
-function startingBoard(): Board {
-    function emptyRow() {
-        return array(8, null)
-    }
-    function pieceAny(color: Color) { return (): Piece => [[...pieceNames], color, false] }
-
-    return ([
-        array(8, pieceAny('BLACK')),
-        array(8, pieceAny('BLACK')),
-        emptyRow(),
-        emptyRow(),
-        emptyRow(),
-        emptyRow(),
-        array(8, pieceAny('WHITE')),
-        array(8, pieceAny('WHITE')),
-    ] satisfies Board).reverse()
-}
-
-function startingGame(): Game {
-    return {board: startingBoard(), captured: [], turn: 'WHITE'}
-}
-
-export { type Board, type PieceName, type Piece, type PieceType, type Color, type Game, pieceTypes, pieceNames, pieceCounts, defaultMove, startingBoard, startingGame, colorOf, typesOf, hasMoved }

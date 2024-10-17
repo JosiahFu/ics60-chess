@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { startingBoard, startingGame, type Game } from '../data/pieces';
     import Board from './Board.svelte';
     import { peerClient, peerHost, type ClientStore, type HostStore } from './store/peer';
+    import {type Game, startingBoard, startingGame} from "../data/game";
 
     export let id: string
     export let client = false
